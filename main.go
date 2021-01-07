@@ -12,27 +12,47 @@ import(
 type Response struct {
 	TotalCount int `json:"totalCount"`
 	PageSize int `json:"pageSize"`
-	//problems Problems `json:"problems"`
+	Problems []struct {
+		ProblemId string `json:"problemId"`
+		DisplayId string `json:"displayId"`
+		Title string `json:"title"`
+		ImpactLevel string `json:"impactLevel"`
+		SeverityLevel string `json:"severityLevel"`
+		Status string `json:"status"`
+		AffectedEntities []struct{
+			EntityId struct {
+				Id string `json:"id"`
+				Type string `json:"type"`
+			} `json:"entityId"`
+		} `json:"affectedEntities"`
+		ImpactedEntities []struct{
+			EntityId struct {
+				Id string `json:"id"`
+				Type string `json:"type"`
+			} `json:"entityId"`
+			Name string `json:"name"`
+		} `json:"impactedEntities"`
+		RootCauseEntity string `json:"rootCauseEntity"`
+		ManagementZones []struct{
+			Id string `json:"id"`
+			Name string `json:"name"`
+		} `json:"managementZones"`
+		EntityTags []struct{
+			Context string `json:"context"`
+			Key string `json:"key"`
+			Value string `json:"value"`
+			StringRepresentation string `json:"stringRepresentation"`
+		} `json:"entityTags"`
+		ProblemFilters []struct{
+			Id string `json:"id"`
+			Name string `json:"name"`
+		} `json:"problemFilters"`
+		StartTime int `json:"startTime"`
+		Endtime int `json:"endTime"`
+	} `json:"problems"`
 }
 
 
-type Problems struct {
-	ProblemId string `json:"problemId"`
-	DisplayId string `json:"displayId"`
-	Title string `json:"title"`
-	ImpactLevel string `json:"impactLevel"`
-	SeverityLevel string `json:"severityLevel"`
-	Status string `json:"status"`
-	AffectedEntities affectedEntities `json:"affectedEntities"`
-}
-
-type affectedEntities struct {
-	EntityId entityId `json:"entityId"`
-}
-
-type entityId struct {
-
-}
 
 
 type Config struct {
@@ -77,11 +97,21 @@ func apiRequest(){
 
 	var responseObject Response
 
+	json.Unmarshal(responseData, &responseObject)
+
+//testing for loop to iterate over response data
+/*
+	for i:= range responseObject.Problems{
+
+		fmt.Println(responseObject.Problems[i].ManagementZones)
+
+	}
+*/
+
 
 	json.Unmarshal(responseData, &responseObject)
 	//print the responseData variable as a string
-	fmt.Println(responseObject.TotalCount)
-	fmt.Println(responseObject.PageSize)
+	fmt.Println(responseObject.Problems[0].StartTime)
 	//fmt.Println(string(responseData))
 
 
