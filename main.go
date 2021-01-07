@@ -7,6 +7,7 @@ import(
 	"log"
 	"net/http"
 	"os"
+	"reflect"//reflect can be removed. It is purely for testing purposes
 )
 
 type Response struct {
@@ -52,23 +53,22 @@ type Response struct {
 	} `json:"problems"`
 }
 
-
-
-
 type Config struct {
 	TenantURL string `json:"tenantURL"`
 	ApiToken string `json:"Api-Token"`
-
 }
 
 func main() {
 	fmt.Println("Welcome to the Top problem report")
-	apiRequest()
+	response := apiRequest()
+	fmt.Println("printing Json")
+	fmt.Println(reflect.TypeOf(response))
+	fmt.Println(response)
 
 }
 
 // apiRequest used to reach to the Dynatrace API and pull back response data as a json
-func apiRequest(){
+func apiRequest()(Response){
 	//Reading data from configuration file 
 	configFile, err := ioutil.ReadFile("config.json")
 	//error handling for configuration file
@@ -96,9 +96,6 @@ func apiRequest(){
 		}
 
 	var responseObject Response
-
-	json.Unmarshal(responseData, &responseObject)
-
 //testing for loop to iterate over response data
 /*
 	for i:= range responseObject.Problems{
@@ -108,11 +105,13 @@ func apiRequest(){
 	}
 */
 
-
+	//unmartial the responseData Json payload and assign to the responseObject variable
 	json.Unmarshal(responseData, &responseObject)
 	//print the responseData variable as a string
-	fmt.Println(responseObject.Problems[0].StartTime)
 	//fmt.Println(string(responseData))
 
+	//returns the responseObject variable as a "Response" Type
+	return responseObject
 
 }
+
