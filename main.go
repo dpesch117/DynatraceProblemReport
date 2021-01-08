@@ -122,4 +122,15 @@ func apiRequest()(Response){
 
 }
 
+func parseJSON(jsonData Response){
+
+	//testing for loop to iterate over response data
+	for i:= range jsonData.Problems{
+
+		fmt.Println(jsonData.Problems[i].ManagementZones)
+
+	}
+
+
+}
 
