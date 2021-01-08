@@ -7,7 +7,8 @@ import(
 	"log"
 	"net/http"
 	"os"
-	//"reflect"//reflect can be removed. It is purely for testing purposes
+	//"reflect" //testing data types. Remove when finished
+
 )
 
 type Response struct {
@@ -65,6 +66,7 @@ func main() {
 	response := apiRequest()
 	
 	fmt.Println("printing Json")
+	fmt.Println(response)
 
 	//calling ParseJSON function and passing response of apirequest() as a parameter
 	parseJSON(response)
@@ -86,13 +88,14 @@ func apiRequest()(Response){
 	//unmarshal the json into the config variable
 	json.Unmarshal(configFile, &config)
 
-	//variable for the GET request
+	//Create variable for the GET request and perform request with supplied variables from config file
 	request, err := http.NewRequest("GET", "https://" + config.TenantURL + ".live.dynatrace.com/api/v2/problems", nil)
-	//if statement to determine if there is an error in the GET request. If there is an error then exit the program
+	//Request error handling
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
+	//setting HTTP header for the GET request with supplied variables from config file
 	request.Header.Set("Authorization", "Api-Token " + config.ApiToken)
 
 	//Variable for the Response
@@ -105,10 +108,18 @@ func apiRequest()(Response){
 
 	//variable to map response body 
 	responseBody, err := ioutil.ReadAll(response.Body)
+
 	//if statement to determine if the error variable is empty. If empty then log error 
 	if err != nil  {
 		log.Fatal(err)
 		}
+	//Printing Response body For testing. To be removed later.
+	fmt.Println("Printing Response Body")
+	fmt.Println(string(responseBody))
+	//Add Error Handling for response body here.
+	//Error handling should check for output of responseBody to see if token failed
+
+
 
 	var responseObject Response
 
@@ -124,12 +135,35 @@ func apiRequest()(Response){
 
 func parseJSON(jsonData Response){
 
-	//testing for loop to iterate over response data
-	for i:= range jsonData.Problems{
+	//var totalProblems int
+	var infraProblems int = 0
+	var serviceProblems int = 0
+	//var topProblems []string
 
-		fmt.Println(jsonData.Problems[i].ManagementZones)
+
+	//for loop to iterate over response data
+	for i:= range jsonData.Problems{
+		//fmt.Println(jsonData.Problems[i].ImpactLevel)
+		//Checking data type
+		//fmt.Println(reflect.TypeOf(jsonData.Problems[i].ImpactLevel))
+
+		//if statement to check whether the problems "impactLevel" is SERVICES or INFRASTRUCTURE
+		if jsonData.Problems[i].ImpactLevel == "SERVICES" {
+			//Increment the "serviceProblems" variable by 1
+			serviceProblems += 1
+		} else if jsonData.Problems[i].ImpactLevel == "INFRASTRUCTURE" {
+			//Increment the "infraProblems" variable by 1
+			infraProblems += 1
+		}
+
+
+		//fmt.Println(jsonData.Problems[i].ManagementZones)
 
 	}
+
+	//testing output of variables
+	fmt.Println(serviceProblems)
+	fmt.Println(infraProblems)
 
 
 }
