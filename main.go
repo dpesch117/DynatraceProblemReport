@@ -135,10 +135,11 @@ func apiRequest()(Response){
 
 func parseJSON(jsonData Response){
 
-	//var totalProblems int
+	var totalProblems int 
 	var infraProblems int = 0
 	var serviceProblems int = 0
 	//var topProblems []string
+	totalProblems = jsonData.TotalCount
 
 
 	//for loop to iterate over response data
@@ -156,14 +157,16 @@ func parseJSON(jsonData Response){
 			infraProblems += 1
 		}
 
-
-		//fmt.Println(jsonData.Problems[i].ManagementZones)
-
 	}
 
 	//testing output of variables
+	fmt.Println("Printing total Problems")
+	fmt.Println(totalProblems)
+	fmt.Println("Printing Service Problems")
 	fmt.Println(serviceProblems)
+	fmt.Println("Printing Infrastructure Problems")
 	fmt.Println(infraProblems)
+
 
 
 }
