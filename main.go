@@ -60,6 +60,15 @@ type Config struct {
 	ApiToken string `json:"Api-Token"`
 }
 
+//List of problems to count the number of times each problem has occurred
+type Problems []Problem
+
+//Problem struct is used to create a key value pair for a problem
+type Problem struct {
+	Name string
+	Count int
+}
+
 func main() {
 	fmt.Println("Welcome to the Top problem report")
 
