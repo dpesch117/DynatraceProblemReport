@@ -11,6 +11,7 @@ import(
 
 )
 
+//Response struct is used to map the JSON file received in HTTP Response from Dynatrace Problem API v2
 type Response struct {
 	TotalCount int `json:"totalCount"`
 	PageSize int `json:"pageSize"`
@@ -53,7 +54,7 @@ type Response struct {
 		Endtime int `json:"endTime"`
 	} `json:"problems"`
 }
-
+//Config struct is used to map the config.JSON file located with this application
 type Config struct {
 	TenantURL string `json:"tenantURL"`
 	ApiToken string `json:"Api-Token"`
@@ -156,6 +157,9 @@ func parseJSON(jsonData Response){
 			//Increment the "infraProblems" variable by 1
 			infraProblems += 1
 		}
+
+
+
 
 	}
 
