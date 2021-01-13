@@ -27,6 +27,7 @@ type Response struct {
 				Id string `json:"id"`
 				Type string `json:"type"`
 			} `json:"entityId"`
+			Name string `json:"name"`
 		} `json:"affectedEntities"`
 		ImpactedEntities []struct{
 			EntityId struct {
@@ -75,8 +76,8 @@ func main() {
 	//assigning return of apiRequest() function to "response" variable
 	response := apiRequest()
 	
-	fmt.Println("printing Json")
-	fmt.Println(response)
+	//fmt.Println("printing Json")
+	//fmt.Println(response)
 
 	//calling ParseJSON function and passing response of apirequest() as a parameter
 	parseJSON(response)
@@ -124,8 +125,8 @@ func apiRequest()(Response){
 		log.Fatal(err)
 		}
 	//Printing Response body For testing. To be removed later.
-	fmt.Println("Printing Response Body")
-	fmt.Println(string(responseBody))
+	//fmt.Println("Printing Response Body")
+	//fmt.Println(string(responseBody))
 	//Add Error Handling for response body here.
 	//Error handling should check for output of responseBody to see if token failed
 
@@ -150,13 +151,13 @@ func parseJSON(jsonData Response){
 	var serviceProblems int = 0
 	//var topProblems []string
 	totalProblems = jsonData.TotalCount
+	//created a list of problems based on the Problems struct
+	problemList := make(map[string]int)
 
 
 	//for loop to iterate over response data
 	for i:= range jsonData.Problems{
-		//fmt.Println(jsonData.Problems[i].ImpactLevel)
-		//Checking data type
-		//fmt.Println(reflect.TypeOf(jsonData.Problems[i].ImpactLevel))
+
 
 		//if statement to check whether the problems "impactLevel" is SERVICES or INFRASTRUCTURE
 		if jsonData.Problems[i].ImpactLevel == "SERVICES" {
@@ -166,10 +167,28 @@ func parseJSON(jsonData Response){
 			//Increment the "infraProblems" variable by 1
 			infraProblems += 1
 		}
+		//Checking data type
+		//fmt.Println(jsonData.Problems[i].AffectedEntities[0].Name)
 
 
+		//for loop to iterate over the objects in the AffectedEntities of the JSON
+		for y := range jsonData.Problems[i].AffectedEntities{
+
+			//Assign variable 'key' to this iteration of the AffectedEntities.Name data
+			key:= jsonData.Problems[i].AffectedEntities[y].Name
 
 
+			//create an if statement to check if there is a value for this item
+			if val, ok := problemList[key]; ok {
+    			fmt.Println("problemList[key] is equal to :" , problemList[key] , " and val is equal to :" , val)
+    			problemList[key] = problemList[key] + 1
+
+
+			}else{
+				key:= jsonData.Problems[i].AffectedEntities[y].Name
+				problemList[key] = 1
+		}
+		}
 	}
 
 	//testing output of variables
@@ -179,8 +198,12 @@ func parseJSON(jsonData Response){
 	fmt.Println(serviceProblems)
 	fmt.Println("Printing Infrastructure Problems")
 	fmt.Println(infraProblems)
-
+	fmt.Println("Printing problemList Variable")
+	fmt.Println(problemList)
 
 
 }
+
+
+
 
