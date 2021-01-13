@@ -76,12 +76,9 @@ func main() {
 	//assigning return of apiRequest() function to "response" variable
 	response := apiRequest()
 	
-	//fmt.Println("printing Json")
-	//fmt.Println(response)
-
 	//calling ParseJSON function and passing response of apirequest() as a parameter
 	parseJSON(response)
-	//fmt.Println(response)
+
 
 }
 
