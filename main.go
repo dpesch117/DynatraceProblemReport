@@ -61,14 +61,6 @@ type Config struct {
 	ApiToken string `json:"Api-Token"`
 }
 
-//List of problems to count the number of times each problem has occurred
-type Problems []Problem
-
-//Problem struct is used to create a key value pair for a problem
-type Problem struct {
-	Name string
-	Count int
-}
 
 func main() {
 	fmt.Println("Welcome to the Top problem report")
@@ -142,17 +134,59 @@ func apiRequest()(Response){
 }
 
 func parseJSON(jsonData Response){
+	//Variable for total count of problems in the JSON file
+	totalProblemCount := returnTotalProblems(jsonData)
+	//variable for count of infrastructure problems in JSON file
+	infraProblemCount := returnInfraProblems(jsonData)
+	//variable for count of service problems in JSON file
+	serviceProblemCount := returnServiceProblems(jsonData)
 
+	//variable for map of all problems in JSON file
+	problemList := returnProblemList(jsonData)
+
+	fmt.Println("Printing total number of problems")
+	fmt.Println(totalProblemCount)
+	fmt.Println("Printing number of infrastructure problems")
+	fmt.Println(infraProblemCount)
+	fmt.Println("Printing number of Service problems")
+	fmt.Println(serviceProblemCount)
+	fmt.Println("Printing Map of problems")
+	fmt.Println(problemList)
+
+
+}
+
+func returnTotalProblems(jsonData Response)(int){
 	var totalProblems int 
-	var infraProblems int = 0
-	var serviceProblems int = 0
-	//var topProblems []string
+
 	totalProblems = jsonData.TotalCount
-	//created a list of problems based on the Problems struct
-	problemList := make(map[string]int)
+
+	return totalProblems
+
+}
+
+func returnInfraProblems(jsonData Response)(int){
+
+	var infraProblems int = 0
+
+	for i:= range jsonData.Problems{
 
 
-	//for loop to iterate over response data
+		//if statement to check whether the problems "impactLevel" is SERVICES or INFRASTRUCTURE
+		if jsonData.Problems[i].ImpactLevel == "INFRASTRUCTURE" {
+			//Increment the "serviceProblems" variable by 1
+			infraProblems += 1
+		}
+	}
+
+	return infraProblems
+
+}
+
+func returnServiceProblems(jsonData Response)(int){
+
+	var serviceProblems int = 0
+
 	for i:= range jsonData.Problems{
 
 
@@ -160,13 +194,20 @@ func parseJSON(jsonData Response){
 		if jsonData.Problems[i].ImpactLevel == "SERVICES" {
 			//Increment the "serviceProblems" variable by 1
 			serviceProblems += 1
-		} else if jsonData.Problems[i].ImpactLevel == "INFRASTRUCTURE" {
-			//Increment the "infraProblems" variable by 1
-			infraProblems += 1
 		}
-		//Checking data type
-		//fmt.Println(jsonData.Problems[i].AffectedEntities[0].Name)
+	}
 
+	return serviceProblems
+}
+
+func returnProblemList(jsonData Response)(map[string]int){
+
+	//created a list of problems based on the Problems struct
+	problemList := make(map[string]int)
+
+
+	//for loop to iterate over response data
+	for i:= range jsonData.Problems{
 
 		//for loop to iterate over the objects in the AffectedEntities of the JSON
 		for y := range jsonData.Problems[i].AffectedEntities{
@@ -188,19 +229,9 @@ func parseJSON(jsonData Response){
 		}
 	}
 
-	//testing output of variables
-	fmt.Println("Printing total Problems")
-	fmt.Println(totalProblems)
-	fmt.Println("Printing Service Problems")
-	fmt.Println(serviceProblems)
-	fmt.Println("Printing Infrastructure Problems")
-	fmt.Println(infraProblems)
-	fmt.Println("Printing problemList Variable")
-	fmt.Println(problemList)
-
+	return problemList
 
 }
-
 
 
 
