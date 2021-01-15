@@ -133,6 +133,7 @@ func apiRequest()(Response){
 
 }
 
+//function to parse through the Response JSON
 func parseJSON(jsonData Response){
 	//Variable for total count of problems in the JSON file
 	totalProblemCount := returnTotalProblems(jsonData)
@@ -144,6 +145,8 @@ func parseJSON(jsonData Response){
 	//variable for map of all problems in JSON file
 	problemList := returnProblemList(jsonData)
 
+
+	//Testing output of functions here
 	fmt.Println("Printing total number of problems")
 	fmt.Println(totalProblemCount)
 	fmt.Println("Printing number of infrastructure problems")
@@ -156,6 +159,7 @@ func parseJSON(jsonData Response){
 
 }
 
+//function to take the Response json and output an integer count of total amount of problems
 func returnTotalProblems(jsonData Response)(int){
 	var totalProblems int 
 
@@ -165,6 +169,7 @@ func returnTotalProblems(jsonData Response)(int){
 
 }
 
+//function to take the Response json and output an integer count of infrastructure problems
 func returnInfraProblems(jsonData Response)(int){
 
 	var infraProblems int = 0
@@ -183,6 +188,7 @@ func returnInfraProblems(jsonData Response)(int){
 
 }
 
+//function to take the Response json and output an integer count of Service problems
 func returnServiceProblems(jsonData Response)(int){
 
 	var serviceProblems int = 0
@@ -200,6 +206,8 @@ func returnServiceProblems(jsonData Response)(int){
 	return serviceProblems
 }
 
+
+//function to take the Response json and output a map of the problems
 func returnProblemList(jsonData Response)(map[string]int){
 
 	//created a list of problems based on the Problems struct
