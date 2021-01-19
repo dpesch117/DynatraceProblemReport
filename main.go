@@ -6,6 +6,7 @@ import(
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	//"reflect" //testing data types. Remove when finished
 
@@ -59,23 +60,13 @@ type Response struct {
 type Config struct {
 	TenantURL string `json:"tenantURL"`
 	ApiToken string `json:"Api-Token"`
+	ManagementZones []struct{
+		Name string `json:"name"`
+	} `json:"managementZones"`
 }
 
 
 func main() {
-	fmt.Println("Welcome to the Top problem report")
-
-	//assigning return of apiRequest() function to "response" variable
-	response := apiRequest()
-	
-	//calling ParseJSON function and passing response of apirequest() as a parameter
-	parseJSON(response)
-
-
-}
-
-// apiRequest used to reach to the Dynatrace API and pull back response data as a json
-func apiRequest()(Response){
 	//Reading data from configuration file 
 	configFile, err := ioutil.ReadFile("config.json")
 	//error handling for configuration file
@@ -88,15 +79,36 @@ func apiRequest()(Response){
 	//unmarshal the json into the config variable
 	json.Unmarshal(configFile, &config)
 
+	fmt.Println("Welcome to the Top problem report")
+
+
+
+	for mz := range config.ManagementZones{
+		fmt.Println("Querying Dynatrace instance for Management Zone :" , config.ManagementZones[mz].Name)
+		response := apiRequest(config.TenantURL, config.ApiToken, config.ManagementZones[mz].Name )
+		parseJSON(response)
+
+
+	}
+
+
+
+
+
+}
+
+// apiRequest used to reach to the Dynatrace API and pull back response data as a json
+func apiRequest(tenantURL string, apiToken string, managementZone string)(Response){
+
 	//Create variable for the GET request and perform request with supplied variables from config file
-	request, err := http.NewRequest("GET", "https://" + config.TenantURL + ".live.dynatrace.com/api/v2/problems", nil)
+	request, err := http.NewRequest("GET", "https://" + tenantURL + ".live.dynatrace.com/api/v2/problems?problemSelector=managementZones%28%22" + url.PathEscape(managementZone) + "%22%29", nil)
 	//Request error handling
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
 	//setting HTTP header for the GET request with supplied variables from config file
-	request.Header.Set("Authorization", "Api-Token " + config.ApiToken)
+	request.Header.Set("Authorization", "Api-Token " + apiToken)
 
 	//Variable for the Response
 	response, err := http.DefaultClient.Do(request)
@@ -113,20 +125,14 @@ func apiRequest()(Response){
 	if err != nil  {
 		log.Fatal(err)
 		}
-	//Printing Response body For testing. To be removed later.
-	//fmt.Println("Printing Response Body")
-	//fmt.Println(string(responseBody))
+
 	//Add Error Handling for response body here.
 	//Error handling should check for output of responseBody to see if token failed
-
-
 
 	var responseObject Response
 
 	//unmartial the responseData Json payload and assign to the responseObject variable
 	json.Unmarshal(responseBody, &responseObject)
-	//print the responseData variable as a string
-	//fmt.Println(string(responseData))
 
 	//returns the responseObject variable as a "Response" Type
 	return responseObject
@@ -155,9 +161,8 @@ func parseJSON(jsonData Response){
 	fmt.Println(serviceProblemCount)
 	fmt.Println("Printing Map of problems")
 	fmt.Println(problemList)
-
-
 }
+
 
 //function to take the Response json and output an integer count of total amount of problems
 func returnTotalProblems(jsonData Response)(int){
@@ -226,8 +231,8 @@ func returnProblemList(jsonData Response)(map[string]int){
 
 			//create an if statement to check if there is a value for this item
 			if val, ok := problemList[key]; ok {
-    			fmt.Println("problemList[key] is equal to :" , problemList[key] , " and val is equal to :" , val)
-    			problemList[key] = problemList[key] + 1
+
+    			problemList[key] = val + 1
 
 
 			}else{
