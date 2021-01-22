@@ -8,6 +8,7 @@ import(
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	//"reflect" //testing data types. Remove when finished
 
 )
@@ -64,6 +65,14 @@ type Config struct {
 		Name string `json:"name"`
 	} `json:"managementZones"`
 }
+
+type kv struct {
+	Key   string
+	Value int
+}
+
+
+
 
 
 func main() {
@@ -196,6 +205,7 @@ func returnInfraProblems(jsonData Response)(int){
 //function to take the Response json and output an integer count of Service problems
 func returnServiceProblems(jsonData Response)(int){
 
+
 	var serviceProblems int = 0
 
 	for i:= range jsonData.Problems{
@@ -241,10 +251,36 @@ func returnProblemList(jsonData Response)(map[string]int){
 		}
 		}
 	}
+	sortProblemList(problemList)
 
 	return problemList
+}
+
+func sortProblemList(problemList map[string]int)([]kv){
+	var ss []kv
+
+	for k, v := range problemList {
+		ss = append(ss, kv{k, v})
+	}
+
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].Value > ss[j].Value
+	})
+
+	//Commented out for loop that shows how to access keys and values in the []kv array
+	//for _, kv := range ss {
+	//	
+	//	fmt.Printf("%s, %d\n", kv.Key, kv.Value)
+	//}
+	fmt.Println("Printing  SS")
+	fmt.Println(ss)
+
+
+	return ss
 
 }
+
+
 
 
 
