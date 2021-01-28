@@ -10,6 +10,8 @@ import(
 	"os"
 	"sort"
 	//"reflect" //testing data types. Remove when finished
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
 
 )
 
@@ -89,16 +91,55 @@ func main() {
 	json.Unmarshal(configFile, &config)
 
 	fmt.Println("Welcome to the Top problem report")
+	var managementZoneNames[]string
+	items := make([]opts.BarData, 0)
 
 
 
+
+
+
+	//Main for loop to iterate through get requests and parse json file
 	for mz := range config.ManagementZones{
+		//Print text to show which management zone we are querying
 		fmt.Println("Querying Dynatrace instance for Management Zone :" , config.ManagementZones[mz].Name)
+		//appending management zone name to the managementZoneNames array
+		managementZoneNames = append(managementZoneNames, config.ManagementZones[mz].Name)
+
+		//response variable for return value of this iteration of api request
 		response := apiRequest(config.TenantURL, config.ApiToken, config.ManagementZones[mz].Name )
-		parseJSON(response)
+		//Variable for total count of problems in the JSON file
+		totalProblemCount := returnTotalProblems(response)
+		if totalProblemCount >=	500{
+			fmt.Println("The problem payload is " ,  totalProblemCount , "Please reduce the number of problems to parse." )
+			os.Exit(1)
+		}
+		//variable for count of infrastructure problems in JSON file
+		infraProblemCount := returnInfraProblems(response)
+		//variable for count of service problems in JSON file
+		serviceProblemCount := returnServiceProblems(response)
+
+		//variable for map of all problems in JSON file
+		problemList := returnProblemList(response)
+
+
+		//Testing output of functions here
+		fmt.Println("Printing total number of problems")
+		fmt.Println(totalProblemCount)
+		fmt.Println("Printing number of infrastructure problems")
+		fmt.Println(infraProblemCount)
+		fmt.Println("Printing number of Service problems")
+		fmt.Println(serviceProblemCount)
+		fmt.Println("Printing Map of problems")
+		fmt.Println(problemList)
+		items = append(items, opts.BarData{Value: totalProblemCount})
+
 
 
 	}
+
+	setBarChart(managementZoneNames, items)
+
 
 
 
@@ -148,33 +189,6 @@ func apiRequest(tenantURL string, apiToken string, managementZone string)(Respon
 
 }
 
-//function to parse through the Response JSON
-func parseJSON(jsonData Response){
-	//Variable for total count of problems in the JSON file
-	totalProblemCount := returnTotalProblems(jsonData)
-	if totalProblemCount >=	500{
-		fmt.Println("The problem payload is " ,  totalProblemCount , "Please reduce the number of problems to parse." )
-		os.Exit(1)
-	}
-	//variable for count of infrastructure problems in JSON file
-	infraProblemCount := returnInfraProblems(jsonData)
-	//variable for count of service problems in JSON file
-	serviceProblemCount := returnServiceProblems(jsonData)
-
-	//variable for map of all problems in JSON file
-	problemList := returnProblemList(jsonData)
-
-
-	//Testing output of functions here
-	fmt.Println("Printing total number of problems")
-	fmt.Println(totalProblemCount)
-	fmt.Println("Printing number of infrastructure problems")
-	fmt.Println(infraProblemCount)
-	fmt.Println("Printing number of Service problems")
-	fmt.Println(serviceProblemCount)
-	fmt.Println("Printing Map of problems")
-	fmt.Println(problemList)
-}
 
 
 //function to take the Response json and output an integer count of total amount of problems
@@ -184,7 +198,6 @@ func returnTotalProblems(jsonData Response)(int){
 	totalProblems = jsonData.TotalCount
 
 	return totalProblems
-
 }
 
 //function to take the Response json and output an integer count of infrastructure problems
@@ -283,6 +296,25 @@ func sortProblemList(problemList map[string]int)([]kv){
 
 
 	return ss
+}
+
+
+func setBarChart(managementZoneNames []string, problemCount []opts.BarData) {
+
+	// create a new bar instance
+	bar := charts.NewBar()
+	// set some global options like Title/Legend/ToolTip or anything else
+	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+		Title:    "Problems sorted by Management Zones",
+		Subtitle: "Default is set to past 2 hours",
+	}))
+
+	// Put data into instance
+	bar.SetXAxis(managementZoneNames).
+		AddSeries("Category A", problemCount)
+	// Where the magic happens
+	f, _ := os.Create("bar.html")
+	bar.Render(f)
 
 }
 
