@@ -152,6 +152,10 @@ func apiRequest(tenantURL string, apiToken string, managementZone string)(Respon
 func parseJSON(jsonData Response){
 	//Variable for total count of problems in the JSON file
 	totalProblemCount := returnTotalProblems(jsonData)
+	if totalProblemCount >=	500{
+		fmt.Println("The problem payload is " ,  totalProblemCount , "Please reduce the number of problems to parse." )
+		os.Exit(1)
+	}
 	//variable for count of infrastructure problems in JSON file
 	infraProblemCount := returnInfraProblems(jsonData)
 	//variable for count of service problems in JSON file
@@ -273,7 +277,9 @@ func sortProblemList(problemList map[string]int)([]kv){
 	//	fmt.Printf("%s, %d\n", kv.Key, kv.Value)
 	//}
 	fmt.Println("Printing  SS")
+
 	fmt.Println(ss)
+
 
 
 	return ss
