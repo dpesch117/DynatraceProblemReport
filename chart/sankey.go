@@ -11,22 +11,19 @@ import (
 
 var (
 	sankeyNode = []opts.SankeyNode{
-		{Name: "Problems"},
-		{Name: "Infrastructure"},
-		{Name: "Services"},
-		{Name: "Application"},
-		{Name: "1Platform"},
-		{Name: "Digital"},
+		{Name: "category1"},
+		{Name: "category2"},
+		{Name: "category3"},
+		{Name: "category4"},
+		{Name: "category5"},
+		{Name: "category6"},
 	}
 
 	sankeyLink = []opts.SankeyLink{
-		{Source: "Problems", Target: "Infrastructure", Value: 10},
-		{Source: "Problems", Target: "Services", Value: 18},
-		{Source: "Problems", Target: "Application", Value: 20},
-		{Source: "Infrastructure", Target: "1Platform", Value: 10},
-		{Source: "Services", Target: "1Platform", Value: 15},
-		{Source: "Services", Target: "Digital", Value: 3},
-		{Source: "Application", Target: "Digital", Value: 20},
+		{Source: "category1", Target: "category2", Value: 10},
+		{Source: "category2", Target: "category3", Value: 15},
+		{Source: "category3", Target: "category4", Value: 20},
+		{Source: "category5", Target: "category6", Value: 25},
 	}
 )
 
@@ -44,7 +41,7 @@ func sankeyBase() *charts.Sankey {
 
 type SankeyExamples struct{}
 
-func (SankeyExamples) Examples() {
+func (SankeyExamples) Sankey() {
 	page := components.NewPage()
 	page.AddCharts(
 		sankeyBase(),
