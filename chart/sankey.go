@@ -2,6 +2,6 @@ package chart
 
 import "fmt"
 
-func BarChart() {
+func SankeyChart() {
 	fmt.Println("Printed your bar chart!!")
 }
