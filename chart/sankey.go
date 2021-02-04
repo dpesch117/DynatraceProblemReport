@@ -11,19 +11,20 @@ import (
 
 var (
 	sankeyNode = []opts.SankeyNode{
-		{Name: "category1"},
-		{Name: "category2"},
-		{Name: "category3"},
-		{Name: "category4"},
-		{Name: "category5"},
-		{Name: "category6"},
+		{Name: "Problems"},
+		{Name: "1Platform"},
+		{Name: "1Platform - DEV"},
+		{Name: "Host"},
+		{Name: "Service"},
+		{Name: "Application"},
 	}
 
 	sankeyLink = []opts.SankeyLink{
-		{Source: "category1", Target: "category2", Value: 10},
-		{Source: "category2", Target: "category3", Value: 15},
-		{Source: "category3", Target: "category4", Value: 20},
-		{Source: "category5", Target: "category6", Value: 25},
+		{Source: "Problems", Target: "1Platform", Value: 30},
+		{Source: "Problems", Target: "1Platform - DEV", Value: 15},
+		{Source: "1Platform", Target: "Host", Value: 10},
+		{Source: "1Platform - DEV", Target: "Service", Value: 15},
+		{Source: "1Platform", Target: "Service", Value: 20},
 	}
 )
 
@@ -31,7 +32,7 @@ func sankeyBase() *charts.Sankey {
 	sankey := charts.NewSankey()
 	sankey.SetGlobalOptions(
 		charts.WithTitleOpts(opts.Title{
-			Title: "Sankey-basic-example",
+			Title: "Dynatrace Problem Distribution",
 		}),
 	)
 
@@ -39,15 +40,14 @@ func sankeyBase() *charts.Sankey {
 	return sankey
 }
 
-type SankeyExamples struct{}
+func Sankey() {
 
-func (SankeyExamples) Sankey() {
 	page := components.NewPage()
 	page.AddCharts(
 		sankeyBase(),
 	)
 
-	f, err := os.Create("examples/html/sankey.html")
+	f, err := os.Create("sankey.html")
 	if err != nil {
 		panic(err)
 	}
