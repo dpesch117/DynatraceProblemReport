@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/dpesch117/DynatraceProblemReport/chart"
-	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
 //Response struct is used to map the JSON file received in HTTP Response from Dynatrace Problem API v2
@@ -92,16 +91,14 @@ func main() {
 	json.Unmarshal(configFile, &config)
 
 	fmt.Println("Welcome to the Top problem report")
-	var managementZoneNames []string
-	barItems := make([]opts.BarData, 0)
-	sankeyItems := make([]opts.SankeyNode, 0)
+	//sankeyItems := make([]opts.SankeyNode, 0)
+	problemData := make(map[string][]string)
 
 	//Main for loop to iterate through get requests and parse json file
 	for mz := range config.ManagementZones {
 		//Print text to show which management zone we are querying
 		fmt.Println("Querying Dynatrace instance for Management Zone :", config.ManagementZones[mz].Name)
-		//appending management zone name to the managementZoneNames array
-		managementZoneNames = append(managementZoneNames, config.ManagementZones[mz].Name)
+
 		//response variable for return value of this iteration of api request
 		response := apiRequest(config.TenantURL, config.ApiToken, config.ManagementZones[mz].Name)
 		time.Sleep(2 * time.Second)
@@ -129,13 +126,16 @@ func main() {
 		fmt.Println(serviceProblemCount)
 		fmt.Println("Printing Map of problems")
 		fmt.Println(problemList)
-		barItems = append(barItems, opts.BarData{Value: totalProblemCount})
-		sankeyItems = append(sankeyItems, opts.SankeyNode{Name: config.ManagementZones[mz].Name, Value: strconv.Itoa(totalProblemCount)})
+		//sankeyItems = append(sankeyItems, opts.SankeyNode{Name: config.ManagementZones[mz].Name, Value: strconv.Itoa(totalProblemCount)})
+		problemData[config.ManagementZones[mz].Name] = append(problemData[config.ManagementZones[mz].Name], strconv.Itoa(totalProblemCount))
+		problemData[config.ManagementZones[mz].Name] = append(problemData[config.ManagementZones[mz].Name], strconv.Itoa(infraProblemCount))
+		problemData[config.ManagementZones[mz].Name] = append(problemData[config.ManagementZones[mz].Name], strconv.Itoa(serviceProblemCount))
+		fmt.Println("Printing problemData variable: ", problemData)
 	}
 
-	chart.BarChart(managementZoneNames, barItems)
-	fmt.Println(sankeyItems)
-	chart.Sankey()
+	chart.BarChart(problemData)
+	//fmt.Println(problemData)
+	//chart.Sankey()
 
 }
 
