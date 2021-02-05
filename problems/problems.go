@@ -60,7 +60,7 @@ type kv struct {
 	Value int
 }
 
-func apiRequest(tenantURL string, apiToken string, managementZone string) Response {
+func ApiRequest(tenantURL string, apiToken string, managementZone string) Response {
 
 	//Create variable for the GET request and perform request with supplied variables from config file
 	request, err := http.NewRequest("GET", "https://"+tenantURL+".live.dynatrace.com/api/v2/problems?from=now-2d&problemSelector=managementZones%28%22"+url.PathEscape(managementZone)+"%22%29", nil)
@@ -101,7 +101,7 @@ func apiRequest(tenantURL string, apiToken string, managementZone string) Respon
 }
 
 //function to take the Response json and output an integer count of total amount of problems
-func returnTotalProblems(jsonData Response) int {
+func ReturnTotalProblems(jsonData Response) int {
 	var totalProblems int
 
 	totalProblems = jsonData.TotalCount
@@ -110,7 +110,7 @@ func returnTotalProblems(jsonData Response) int {
 }
 
 //function to take the Response json and output an integer count of infrastructure problems
-func returnInfraProblems(jsonData Response) int {
+func ReturnInfraProblems(jsonData Response) int {
 
 	var infraProblems int = 0
 
@@ -128,7 +128,7 @@ func returnInfraProblems(jsonData Response) int {
 }
 
 //function to take the Response json and output an integer count of Service problems
-func returnServiceProblems(jsonData Response) int {
+func ReturnServiceProblems(jsonData Response) int {
 
 	var serviceProblems int = 0
 
@@ -145,7 +145,7 @@ func returnServiceProblems(jsonData Response) int {
 }
 
 //function to take the Response json and output a map of the problems
-func returnProblemList(jsonData Response) map[string]int {
+func ReturnProblemList(jsonData Response) map[string]int {
 
 	//created a list of problems based on the Problems struct
 	problemList := make(map[string]int)
@@ -170,12 +170,12 @@ func returnProblemList(jsonData Response) map[string]int {
 			}
 		}
 	}
-	sortProblemList(problemList)
+	SortProblemList(problemList)
 
 	return problemList
 }
 
-func sortProblemList(problemList map[string]int) []kv {
+func SortProblemList(problemList map[string]int) []kv {
 	var ss []kv
 
 	for k, v := range problemList {
