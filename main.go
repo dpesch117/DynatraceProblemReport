@@ -126,7 +126,8 @@ func main() {
 		fmt.Println(serviceProblemCount)
 		fmt.Println("Printing Map of problems")
 		fmt.Println(problemList)
-		//sankeyItems = append(sankeyItems, opts.SankeyNode{Name: config.ManagementZones[mz].Name, Value: strconv.Itoa(totalProblemCount)})
+
+		//appending data to the problemData MAP. Current map looks like {Key: {value, value, value }}
 		problemData[config.ManagementZones[mz].Name] = append(problemData[config.ManagementZones[mz].Name], strconv.Itoa(totalProblemCount))
 		problemData[config.ManagementZones[mz].Name] = append(problemData[config.ManagementZones[mz].Name], strconv.Itoa(infraProblemCount))
 		problemData[config.ManagementZones[mz].Name] = append(problemData[config.ManagementZones[mz].Name], strconv.Itoa(serviceProblemCount))
@@ -135,7 +136,7 @@ func main() {
 
 	chart.BarChart(problemData)
 	//fmt.Println(problemData)
-	//chart.Sankey()
+	chart.Sankey(problemData)
 
 }
 
@@ -143,7 +144,7 @@ func main() {
 func apiRequest(tenantURL string, apiToken string, managementZone string) Response {
 
 	//Create variable for the GET request and perform request with supplied variables from config file
-	request, err := http.NewRequest("GET", "https://"+tenantURL+".live.dynatrace.com/api/v2/problems?from=now-1w&problemSelector=managementZones%28%22"+url.PathEscape(managementZone)+"%22%29", nil)
+	request, err := http.NewRequest("GET", "https://"+tenantURL+".live.dynatrace.com/api/v2/problems?from=now-2d&problemSelector=managementZones%28%22"+url.PathEscape(managementZone)+"%22%29", nil)
 	//Request error handling
 	if err != nil {
 		fmt.Print(err.Error())

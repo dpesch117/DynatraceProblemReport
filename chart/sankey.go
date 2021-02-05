@@ -1,8 +1,10 @@
 package chart
 
 import (
+	"fmt"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/components"
@@ -12,20 +14,11 @@ import (
 var (
 	sankeyNode = []opts.SankeyNode{
 		{Name: "Problems"},
-		{Name: "1Platform"},
-		{Name: "1Platform - DEV"},
-		{Name: "Host"},
+		{Name: "Infrastructure"},
 		{Name: "Service"},
-		{Name: "Application"},
 	}
 
-	sankeyLink = []opts.SankeyLink{
-		{Source: "Problems", Target: "1Platform", Value: 30},
-		{Source: "Problems", Target: "1Platform - DEV", Value: 15},
-		{Source: "1Platform", Target: "Host", Value: 10},
-		{Source: "1Platform - DEV", Target: "Service", Value: 15},
-		{Source: "1Platform", Target: "Service", Value: 20},
-	}
+	sankeyLink = []opts.SankeyLink{}
 )
 
 func sankeyBase() *charts.Sankey {
@@ -40,7 +33,30 @@ func sankeyBase() *charts.Sankey {
 	return sankey
 }
 
-func Sankey() {
+func Sankey(problemData map[string][]string) {
+
+	var managementZones []string
+
+	for key, element := range problemData {
+		managementZones = append(managementZones, key)
+		fmt.Println("key: ", key, "value: ", element)
+		sankeyNode = append(sankeyNode, opts.SankeyNode{Name: key})
+		fmt.Println(sankeyNode)
+
+		valTotal, _ := strconv.ParseFloat(element[0], 32)
+		floatTotalProblems := float32(valTotal)
+		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: "Problems", Target: key, Value: floatTotalProblems})
+		valInfra, _ := strconv.ParseFloat(element[1], 32)
+		floatInfraProblems := float32(valInfra)
+		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Infrastructure", Value: floatInfraProblems})
+		valService, _ := strconv.ParseFloat(element[2], 32)
+		floatServiceProblems := float32(valService)
+		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Service", Value: floatServiceProblems})
+
+		fmt.Println("printing sankeyLink", sankeyLink)
+		fmt.Println("total", floatTotalProblems, "infra", floatInfraProblems, "service", floatServiceProblems)
+
+	}
 
 	page := components.NewPage()
 	page.AddCharts(
