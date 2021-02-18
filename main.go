@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/dpesch117/DynatraceProblemReport/chart"
 	"github.com/dpesch117/DynatraceProblemReport/problems"
+	"github.com/go-echarts/go-echarts/v2/components"
 )
 
 //Config struct is used to map the config.JSON file located with this application
@@ -84,5 +86,19 @@ func main() {
 	chart.BarChart(problemData)
 	//fmt.Println(problemData)
 	chart.Sankey(problemData)
+
+	fmt.Println("running Dashboard() function")
+
+	//Testing Adding multiple charts to a single dashboard
+	page := components.NewPage()
+	page.AddCharts(
+		chart.GraphSankey(),
+		chart.BarChart(problemData),
+	)
+	f, err := os.Create("test.html")
+	if err != nil {
+		panic(err)
+	}
+	page.Render(io.MultiWriter(f))
 
 }

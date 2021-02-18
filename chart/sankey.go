@@ -45,7 +45,7 @@ func Sankey(problemData map[string][]string) {
 
 	//iterate over problemdata and append problems to sankeylink
 	for key, element := range problemData {
-		fmt.Println("key: ", key, "value: ", element)
+		//fmt.Println("key: ", key, "value: ", element)
 
 		sankeyNode = append(sankeyNode, opts.SankeyNode{Name: key})
 
@@ -59,9 +59,7 @@ func Sankey(problemData map[string][]string) {
 		valInfra, _ := strconv.ParseFloat(element[1], 32)
 		floatInfraProblems := float32(valInfra)
 		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Infrastructure", Value: floatInfraProblems})
-		//valService, _ := strconv.ParseFloat(element[2], 32)
-		//floatServiceProblems := float32(valService)
-		//sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Service", Value: floatServiceProblems})
+
 	}
 	//iterate over problemdata and append Service to sankeylink
 	for key, element := range problemData {
@@ -74,16 +72,12 @@ func Sankey(problemData map[string][]string) {
 	sankeyData := Sankeydata{Nodes: sankeyNode, Links: sankeyLink}
 
 	file, _ := json.MarshalIndent(sankeyData, "   ", " ")
-	_ = ioutil.WriteFile("test.json", file, 0644)
-
-	fmt.Println("Printing Sankey Node")
-	fmt.Println(sankeyNode)
-	//fmt.Println(sankeyLink)
+	_ = ioutil.WriteFile("chart/Sankey.json", file, 0644)
 
 	page := components.NewPage()
 	page.AddCharts(
 		sankeyBase(),
-		graphEnergy(),
+		GraphSankey(),
 	)
 
 	f, err := os.Create("sankey.html")
@@ -93,7 +87,7 @@ func Sankey(problemData map[string][]string) {
 	page.Render(io.MultiWriter(f))
 }
 
-func graphEnergy() *charts.Sankey {
+func GraphSankey() *charts.Sankey {
 	sankey := charts.NewSankey()
 	sankey.SetGlobalOptions(
 		charts.WithTitleOpts(opts.Title{
@@ -101,7 +95,7 @@ func graphEnergy() *charts.Sankey {
 		}),
 	)
 
-	file, err := ioutil.ReadFile("test.json")
+	file, err := ioutil.ReadFile("chart/Sankey.json")
 	if err != nil {
 		log.Fatal(err)
 	}

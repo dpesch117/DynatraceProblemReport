@@ -7,7 +7,7 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
-func BarChart(problemData map[string][]string) {
+func BarChart(problemData map[string][]string) *charts.Bar {
 	// create a new bar instance
 	bar := charts.NewBar()
 	// set some global options like Title/Legend/ToolTip or anything else
@@ -29,4 +29,6 @@ func BarChart(problemData map[string][]string) {
 	// Where the magic happens
 	f, _ := os.Create("bar.html")
 	bar.Render(f)
+
+	return bar
 }
