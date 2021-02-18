@@ -35,28 +35,40 @@ func sankeyBase() *charts.Sankey {
 
 func Sankey(problemData map[string][]string) {
 
-	var managementZones []string
-
+	//iterate over problemdata and append problems to sankeylink
 	for key, element := range problemData {
-		managementZones = append(managementZones, key)
 		fmt.Println("key: ", key, "value: ", element)
 		sankeyNode = append(sankeyNode, opts.SankeyNode{Name: key})
-		fmt.Println(sankeyNode)
+		//fmt.Println(sankeyNode)
 
 		valTotal, _ := strconv.ParseFloat(element[0], 32)
 		floatTotalProblems := float32(valTotal)
 		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: "Problems", Target: key, Value: floatTotalProblems})
+		//valInfra, _ := strconv.ParseFloat(element[1], 32)
+		//floatInfraProblems := float32(valInfra)
+		//sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Infrastructure", Value: floatInfraProblems})
+		//valService, _ := strconv.ParseFloat(element[2], 32)
+		//floatServiceProblems := float32(valService)
+		//sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Service", Value: floatServiceProblems})
+	}
+
+	//iterate over problemdata and append infrastructure to sankeylink
+	for key, element := range problemData {
 		valInfra, _ := strconv.ParseFloat(element[1], 32)
 		floatInfraProblems := float32(valInfra)
 		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Infrastructure", Value: floatInfraProblems})
+		//valService, _ := strconv.ParseFloat(element[2], 32)
+		//floatServiceProblems := float32(valService)
+		//sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Service", Value: floatServiceProblems})
+	}
+	//iterate over problemdata and append Service to sankeylink
+	for key, element := range problemData {
 		valService, _ := strconv.ParseFloat(element[2], 32)
 		floatServiceProblems := float32(valService)
 		sankeyLink = append(sankeyLink, opts.SankeyLink{Source: key, Target: "Service", Value: floatServiceProblems})
-
-		fmt.Println("printing sankeyLink", sankeyLink)
-		fmt.Println("total", floatTotalProblems, "infra", floatInfraProblems, "service", floatServiceProblems)
-
 	}
+	fmt.Println(sankeyNode)
+	fmt.Println(sankeyLink)
 
 	page := components.NewPage()
 	page.AddCharts(

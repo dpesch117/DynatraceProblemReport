@@ -63,7 +63,7 @@ type kv struct {
 func ApiRequest(tenantURL string, apiToken string, managementZone string) Response {
 
 	//Create variable for the GET request and perform request with supplied variables from config file
-	request, err := http.NewRequest("GET", "https://"+tenantURL+".live.dynatrace.com/api/v2/problems?from=now-2d&problemSelector=managementZones%28%22"+url.PathEscape(managementZone)+"%22%29", nil)
+	request, err := http.NewRequest("GET", "https://"+tenantURL+".live.dynatrace.com/api/v2/problems?from=now-6d&problemSelector=managementZones%28%22"+url.PathEscape(managementZone)+"%22%29", nil)
 	//Request error handling
 	if err != nil {
 		fmt.Print(err.Error())
