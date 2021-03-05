@@ -14,13 +14,13 @@ Go 1.15
 **Instructions:**
 
 
-Download the Source code above.
+**Download the Source code above.**
 
-Create the Go.MOD file
-
+**Create the go.MOD file**
+```
 $go mod init https://github.com/dpesch117/DynatraceProblemReport/
-
-Create a config.json file with the following format:
+```
+**Create a config.json file with the following format:**
 ```
 {
 	"tenantURL":"", //Environment ID here
@@ -32,4 +32,7 @@ Create a config.json file with the following format:
 	]
 }
 ```
-
+Run the go progam
+```
+$go run main.go
+```
