@@ -12,3 +12,22 @@ Go 1.15
 
 
 **Instructions:**
+
+---
+Download the Source code above.
+---
+Create the Go.MOD file
+
+$go mod init https://github.com/dpesch117/DynatraceProblemReport/
+---
+Create a config.json file with the following format:
+
+{
+	"tenantURL":"", //Environment ID here
+	"Api-Token": "", //API Token with API V2 "Read Problems" Permissions
+	"managementZones" : [
+		{
+			"name" : ""
+		}
+	]
+}
