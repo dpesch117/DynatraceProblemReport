@@ -32,7 +32,9 @@ $go mod init https://github.com/dpesch117/DynatraceProblemReport/
 	]
 }
 ```
-Run the go progam
+**Run the go progam**
 ```
 $go run main.go
 ```
+
+At this point you will find output HTML files inside your program's main directory. These files will be changed & updated as the project gets further along. 
